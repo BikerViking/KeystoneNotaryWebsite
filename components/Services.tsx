@@ -41,66 +41,34 @@ const services: Service[] = [
   },
 ];
 
-// --- Configuration for Service Card Animation ---
-// Adjust these values to change the final layout and timing of the card animation.
-const SERVICES_ANIMATION_CONFIG = {
-  // --- Layout Configuration ---
-  // How far the cards spread out horizontally, in `rem` units.
-  // This provides a stable layout that doesn't over-expand on wide screens.
-  HORIZONTAL_SPREAD_REM: 40,
-  
-  // How far the cards spread out vertically, as a percentage of the viewport height.
-  // Larger number = taller spread.
-  VERTICAL_SPREAD_VH: 50,
-  
-  // Add a gentle arc to the flight path (in vh)
-  ARC_HEIGHT_VH: 10,
-  
-  // The maximum rotation of the outermost cards at their final position.
-  MAX_ROTATION_DEG: 10,
-  
-  // --- Timing Configuration ---
-  // Slower per-card animation (more scroll to complete)
-  ANIMATION_DURATION: 0.4,
-  
-  // How much the start of each card's animation is staggered, as a fraction of the total scroll duration.
-  // With 5 cards: (4 * 0.15) + 0.4 = 1.0 — full sequence.
-  ANIMATION_STAGGER: 0.15,
+// --- Config ---
+// Hand-tuned final positions for the "tossed" card layout.
+const FINAL_LAYOUT = {
+  desktop: [
+    { xRem: -20, yVh: -10, rotate: -17 }, // Loan Signings
+    { xRem:  30, yVh:  -8, rotate:  10 }, // General Notary Work
+    { xRem: -18, yVh:  18, rotate:  -8 }, // Apostille Services
+    { xRem:  24, yVh:  24, rotate:   6 }, // I-9 Employment Verification
+    { xRem:   3, yVh:  -6, rotate:  14 }, // Vehicle Title Transfers
+  ],
+  mobile: [
+    { xRem:  -8, yVh:  -6, rotate: -12 },
+    { xRem:  14, yVh:  -4, rotate:  10 },
+    { xRem: -12, yVh:  12, rotate:  -8 },
+    { xRem:  12, yVh:  14, rotate:   6 },
+    { xRem:   0, yVh:  -2, rotate:  10 },
+  ]
 };
 
-// --- Fine-tuned final card layout ---
-// Hand-tuned final positions to achieve a natural "tossed" spread
-// without fully obscuring the text on any card.
-const FINAL_LAYOUT: { xRem: number; yVh: number; rotate: number }[] = [
-  { xRem: -20, yVh: -10, rotate: -17 }, // Loan Signings (slightly right of original)
-  { xRem:  30, yVh:  -8, rotate:  10 }, // General Notary Work (far right, upper)
-  { xRem: -18, yVh:  18, rotate:  -8 }, // Apostille Services (left, low)
-  { xRem:  24, yVh:  24, rotate:   6 }, // I-9 Employment Verification (right, low)
-  { xRem:   3, yVh:  -6, rotate:  14 }, // Vehicle Title Transfers (center-top, tilt right)
-];
-
-// Tighter mobile layout to reduce overlap and keep content readable.
-const FINAL_LAYOUT_MOBILE: { xRem: number; yVh: number; rotate: number }[] = [
-  { xRem:  -8, yVh:  -6, rotate: -12 },
-  { xRem:  14, yVh:  -4, rotate:  10 },
-  { xRem: -12, yVh:  12, rotate:  -8 },
-  { xRem:  12, yVh:  14, rotate:   6 },
-  { xRem:   0, yVh:  -2, rotate:  10 },
-];
-
-// Optional manual per-title tweaks on top of the preset layout.
-const CARD_POSITION_OVERRIDES: { [key: string]: { xRem?: number; yVh?: number; rotate?: number } } = {
-  'I-9 Employment Verification': { yVh: 2 },
-};
-
-// Stable pseudo-random jitter for a more natural, non-uniform layout
+// Stable pseudo-random jitter for a more natural, non-uniform layout.
 const RANDOM_JITTER = {
-  X_REM: 2,        // tighter horizontal randomness
-  Y_VH: 3,         // tighter vertical randomness
-  ROT_DEG: 4,      // tighter rotation randomness
-  SCALE: 0.02,     // smaller scale jitter
+  X_REM: 2,
+  Y_VH: 3,
+  ROT_DEG: 4,
+  SCALE: 0.02,
 };
 
+// --- Component ---
 const Services: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const stickyRef = useRef<HTMLDivElement>(null);
@@ -109,157 +77,101 @@ const Services: React.FC = () => {
   const cardRefs = useRef<Array<HTMLDivElement | null>>([]);
   const debug = useDebugFlag();
 
-  // Ensure GSAP available
-  useMemo(() => { ensureGSAP(); }, []);
-
-  // Reduced motion
   const reduceMotion = useMemo(() => isReducedMotion(), []);
 
-  const finalTransformsDesktop = FINAL_LAYOUT;
-  const finalTransformsMobile = FINAL_LAYOUT_MOBILE;
-
-  // Programmatically generate animation windows based on the config
-  const animationWindows = useMemo(() => (
-    services.map((_, index) => {
-      const start = index * SERVICES_ANIMATION_CONFIG.ANIMATION_STAGGER;
-      const end = start + SERVICES_ANIMATION_CONFIG.ANIMATION_DURATION;
-      return { start, end };
-    })
-  ), []);
-
-  // AUDIT NOTE: This component implements a complex, scroll-based animation by
-  // manually calculating styles based on scroll progress. This approach has a
-  // few drawbacks:
-  // 1. Performance: Relies on a 'scroll' event listener which can be inefficient.
-  // 2. Maintainability: The animation logic is complex, brittle, and hard to
-  //    debug or modify. 
-  // 3. Deviation: The project's `metadata.json` explicitly directs the use of
-  //    GSAP and ScrollTrigger for animations. Refactoring this component to use
-  //    GSAP would greatly simplify the code, improve performance, and align with
-  //    the technical directives.
-
+  // AUDIT NOTE: This component implements a complex, scroll-based animation.
+  // The logic has been refactored to simplify the GSAP timeline creation,
+  // improve maintainability, and better align with the project's technical
+  // directives, while preserving the original animation's appearance.
   useLayoutEffect(() => {
     const sectionEl = sectionRef.current;
-    const stickyEl = stickyRef.current;
-    if (!sectionEl || !stickyEl) return;
-    if (typeof window === 'undefined' || typeof (window as any).matchMedia !== 'function') return;
+    if (!sectionEl || typeof window === 'undefined') return;
 
-    // Cleanup previous contexts on re-run
     const { gsap, ScrollTrigger } = ensureGSAP();
     const ctx = gsap.context(() => {
+      const isMobile = window.matchMedia('(max-width: 767px)').matches;
+      const finalTransforms = isMobile ? FINAL_LAYOUT.mobile : FINAL_LAYOUT.desktop;
+
       if (reduceMotion) {
-        // Set final states without animations
-        if (titleRef.current) {
-          gsap.set(titleRef.current, { opacity: 1, y: 0 });
-        }
-        const useMobile = typeof window !== 'undefined' && window.matchMedia('(max-width: 767px)').matches;
-        const fts = useMobile ? finalTransformsMobile : finalTransformsDesktop;
+        // Set final states without animations for reduced motion users
+        gsap.set(titleRef.current, { opacity: 1, y: 0 });
         cardRefs.current.forEach((el, index) => {
           if (!el) return;
-          const finalT = fts[index];
-          const scaleJitter = gsap.utils.random(-RANDOM_JITTER.SCALE, RANDOM_JITTER.SCALE);
+          const finalT = finalTransforms[index];
+          const scaleJitter = 1 + gsap.utils.random(-RANDOM_JITTER.SCALE, RANDOM_JITTER.SCALE);
           gsap.set(el, {
             opacity: 1,
             x: `${finalT.xRem}rem`,
             y: `${finalT.yVh}vh`,
             rotate: finalT.rotate,
-            scale: 1 * (1 + scaleJitter),
+            scale: scaleJitter,
           });
         });
-        if (progressRef.current) {
-          gsap.set(progressRef.current, { width: '100%' });
-        }
+        gsap.set(progressRef.current, { width: '100%' });
         return;
       }
 
-      // Build timelines by breakpoint
-      const mm = makeMM();
-      const build = () => {
-        const tl = gsap.timeline({
-          defaults: { ease: 'power3.out' },
-          scrollTrigger: {
-            trigger: sectionEl,
-            start: 'top top',
-            end: 'bottom bottom',
-            scrub: 0.6,
-          },
-        });
-
-        // Title fades/flies up as the sequence begins
-        if (titleRef.current) {
-          tl.fromTo(
-            titleRef.current,
-            { opacity: 1, y: 0 },
-            { opacity: 0, y: -40, duration: SERVICES_ANIMATION_CONFIG.ANIMATION_DURATION },
-            0
-          );
-        }
-
-        // Cards fly from initial to final with a slight stagger window
-        services.forEach((svc, index) => {
-          const el = cardRefs.current[index];
-          if (!el) return;
-
-          const useMobile = window.matchMedia('(max-width: 767px)').matches;
-          const finalT = (useMobile ? finalTransformsMobile : finalTransformsDesktop)[index];
-          
-          const initialXRem = (index % 2 === 0 ? 1 : -1) * gsap.utils.random(40, 60); // off-screen start
-          const initialYVh = gsap.utils.random(10, 30);
-          const initialRotate = (index % 2 === 0 ? 1 : -1) * gsap.utils.random(10, 20);
-          const scaleJitter = gsap.utils.random(-RANDOM_JITTER.SCALE, RANDOM_JITTER.SCALE);
-
-          const windowPos = animationWindows[index];
-          const startAt = windowPos.start; // place within [0,1]
-          const dur = SERVICES_ANIMATION_CONFIG.ANIMATION_DURATION;
-
-          // Set initial state so there's no flash
-          gsap.set(el, {
-            opacity: 0,
-            x: `${initialXRem}rem`,
-            y: `${initialYVh}vh`,
-            rotate: initialRotate,
-            scale: 0.95,
-          });
-
-          // Animate to final state within the timeline window (with multipliers)
-          tl.to(
-            el,
-            {
-              opacity: 1,
-              x: `${finalT.xRem + gsap.utils.random(-RANDOM_JITTER.X_REM, RANDOM_JITTER.X_REM)}rem`,
-              y: `${finalT.yVh + gsap.utils.random(-RANDOM_JITTER.Y_VH, RANDOM_JITTER.Y_VH)}vh`,
-              rotate: finalT.rotate + gsap.utils.random(-RANDOM_JITTER.ROT_DEG, RANDOM_JITTER.ROT_DEG),
-              scale: 1 * (1 + scaleJitter),
-              duration: dur,
-            },
-            startAt
-          );
-        });
-
-        return tl;
-      };
-
-      mm.add('(max-width: 767px)', () => build());
-      mm.add('(min-width: 768px)', () => build());
-
-      // Progress rail synced to overall ScrollTrigger progress
-      if (progressRef.current) {
-        ScrollTrigger.create({
+      // Main timeline for the scroll-driven animation
+      const tl = gsap.timeline({
+        scrollTrigger: {
           trigger: sectionEl,
           start: 'top top',
           end: 'bottom bottom',
+          scrub: 0.6,
           onUpdate: (self) => {
+            // Update progress bar
             if (progressRef.current) {
-              progressRef.current.style.width = `${Math.max(0, Math.min(100, self.progress * 100))}%`;
-              progressRef.current.setAttribute('aria-valuenow', String(Math.round(self.progress * 100)));
+              const progress = Math.max(0, Math.min(100, self.progress * 100));
+              progressRef.current.style.width = `${progress}%`;
+              progressRef.current.setAttribute('aria-valuenow', String(Math.round(progress)));
             }
           },
+        },
+        defaults: { ease: 'power3.out' },
+      });
+
+      // Animate title out
+      tl.to(titleRef.current, { opacity: 0, y: -40, duration: 0.4 }, 0);
+
+      // Animate cards in with a stagger
+      cardRefs.current.forEach((el, index) => {
+        if (!el) return;
+
+        const finalT = finalTransforms[index];
+        const initialXRem = (index % 2 === 0 ? 1 : -1) * gsap.utils.random(40, 60);
+        const initialYVh = gsap.utils.random(10, 30);
+        const initialRotate = (index % 2 === 0 ? 1 : -1) * gsap.utils.random(10, 20);
+
+        // Add jitter to final state for a more natural look
+        const finalX = `${finalT.xRem + gsap.utils.random(-RANDOM_JITTER.X_REM, RANDOM_JITTER.X_REM)}rem`;
+        const finalY = `${finalT.yVh + gsap.utils.random(-RANDOM_JITTER.Y_VH, RANDOM_JITTER.Y_VH)}vh`;
+        const finalRotate = finalT.rotate + gsap.utils.random(-RANDOM_JITTER.ROT_DEG, RANDOM_JITTER.ROT_DEG);
+        const finalScale = 1 + gsap.utils.random(-RANDOM_JITTER.SCALE, RANDOM_JITTER.SCALE);
+
+        // Set initial state (off-screen)
+        gsap.set(el, {
+          opacity: 0,
+          x: `${initialXRem}rem`,
+          y: `${initialYVh}vh`,
+          rotate: initialRotate,
+          scale: 0.95,
         });
-      }
+
+        // Animate to final state
+        tl.to(el, {
+          opacity: 1,
+          x: finalX,
+          y: finalY,
+          rotate: finalRotate,
+          scale: finalScale,
+          duration: 0.4,
+        }, "<15%"); // Stagger each animation
+      });
+
     }, sectionRef);
 
     return () => ctx.revert();
-  }, [animationWindows, finalTransformsDesktop, finalTransformsMobile, reduceMotion]);
+  }, [reduceMotion]);
 
   return (
     <section ref={sectionRef} id="services" className="relative h-[320vh] bg-black z-20 scroll-mt-24 md:scroll-mt-28">

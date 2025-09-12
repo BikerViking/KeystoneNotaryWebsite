@@ -1,78 +1,79 @@
 import React, { useState, useEffect, useRef } from 'react';
-import SmartImage from './SmartImage';
 
+// --- Content (from metadata.json) ---
+const content = {
+  logoText: {
+    primary: "KEY",
+    secondary: "STONE"
+  },
+  navLinks: [
+    { text: "Services", href: "#services" },
+    { text: "About", href: "#about" },
+    { text: "FAQ", href: "#faq" },
+    { text: "Contact", href: "#contact" }
+  ],
+  ctaButton: { text: "Get Started", href: "#contact" }
+};
+
+// --- Main Component ---
 const Header: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
 
+  // --- Accessibility & State Hooks ---
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
-    };
-    window.addEventListener('scroll', handleScroll);
+    const handleScroll = () => setIsScrolled(window.scrollY > 10);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   useEffect(() => {
-    if (isMenuOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
-    }
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
+    document.body.style.overflow = isMenuOpen ? 'hidden' : 'unset';
+    return () => { document.body.style.overflow = 'unset'; };
   }, [isMenuOpen]);
 
-  // Close on Escape for accessibility comfort
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setIsMenuOpen(false);
+      if (e.key === 'Escape') closeMenu();
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, []);
 
-  // Focus trap when mobile menu is open
+  useEffect(() => {
+    if (!isMenuOpen) {
+      setTimeout(() => menuButtonRef.current?.focus(), 0);
+    } else {
+      const firstFocusable = panelRef.current?.querySelector<HTMLElement>('a, button');
+      firstFocusable?.focus();
+    }
+  }, [isMenuOpen]);
+
   useEffect(() => {
     if (!isMenuOpen) return;
-    // Focus first link on open
-    const firstFocusable = panelRef.current?.querySelector<HTMLElement>('a, button');
-    firstFocusable?.focus();
-
-    const handleKeyDown = (e: KeyboardEvent) => {
+    const handleFocusTrap = (e: KeyboardEvent) => {
       if (e.key !== 'Tab') return;
-      const focusables = panelRef.current?.querySelectorAll<HTMLElement>('a, button, [tabindex]:not([tabindex="-1"])');
-      if (!focusables || focusables.length === 0) return;
-      const list = Array.from(focusables).filter(el => !el.hasAttribute('disabled'));
-      const first = list[0];
-      const last = list[list.length - 1];
-      const active = document.activeElement as HTMLElement | null;
-      const isShift = e.shiftKey;
-      if (isShift && active === first) {
+      const focusables = panelRef.current?.querySelectorAll<HTMLElement>('a, button');
+      if (!focusables) return;
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
         e.preventDefault();
         last.focus();
-      } else if (!isShift && active === last) {
+      } else if (!e.shiftKey && document.activeElement === last) {
         e.preventDefault();
         first.focus();
       }
     };
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [isMenuOpen]);
-
-  // Restore focus to menu button when the panel closes
-  useEffect(() => {
-    if (!isMenuOpen) {
-      // Defer to allow DOM to settle after transitions
-      setTimeout(() => menuButtonRef.current?.focus(), 0);
-    }
+    document.addEventListener('keydown', handleFocusTrap);
+    return () => document.removeEventListener('keydown', handleFocusTrap);
   }, [isMenuOpen]);
 
   const closeMenu = () => setIsMenuOpen(false);
 
+  // --- Render ---
   return (
     <>
       <header
@@ -80,89 +81,64 @@ const Header: React.FC = () => {
           isScrolled ? 'bg-black/70 backdrop-blur-lg border-b border-zinc-800' : 'bg-transparent'
         }`}
       >
-        <div className="container mx-auto py-5 flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            {(() => {
-              const scrolledSources = [
-                "/assets/logo-silver.png",
-                "/assets/icon-192.png",
-                "/assets/icon-512.png",
-                "/assets/logo-black.PNG",
-              ];
-              const topSources = [
-                "/assets/logo-black.PNG",
-                "/assets/icon-192.png",
-                "/assets/logo-silver.png",
-                "/assets/icon-512.png",
-              ];
-              const sources = isScrolled ? scrolledSources : topSources;
-              return (
-                <SmartImage
-                  sources={sources}
-                  alt="Keystone Notary Group"
-                  width={28}
-                  height={28}
-                  className="h-7 w-7 object-contain transition-opacity duration-300"
-                />
-              );
-            })()}
+        <div className="container mx-auto px-6 py-4 flex justify-between items-center">
+          <a href="#" className="flex items-center gap-2" aria-label="Keystone Notary Group Home">
+            <img
+              src="/assets/logo-silver-metallic.png"
+              alt="Keystone Notary Group Logo"
+              className="h-8 w-8 object-contain"
+            />
             <div className="text-2xl font-bold text-white tracking-wider select-none">
-              <span className="text-neutral-300">KEY</span>STONE
+              <span className="text-neutral-300">{content.logoText.primary}</span>
+              {content.logoText.secondary}
             </div>
-          </div>
-          <nav className="hidden md:flex space-x-10">
-            <a href="#services" className="text-neutral-300 hover:text-white transition-colors duration-300">Services</a>
-            <a href="#about" className="text-neutral-300 hover:text-white transition-colors duration-300">About</a>
-            <a href="#faq" className="text-neutral-300 hover:text-white transition-colors duration-300">FAQ</a>
-            <a href="#contact" className="text-neutral-300 hover:text-white transition-colors duration-300">Contact</a>
-          </nav>
-          <a href="#contact" className="hidden md:block bg-neutral-300 text-black font-bold py-2 px-6 rounded-full hover:bg-white transition-all duration-300 transform hover:scale-105">
-            Get Started
           </a>
+          <nav className="hidden md:flex items-center space-x-8">
+            {content.navLinks.map(link => (
+              <a key={link.href} href={link.href} className="text-neutral-200 hover:text-white transition-colors duration-300">
+                {link.text}
+              </a>
+            ))}
+            <a href={content.ctaButton.href} className="inline-block rounded-full bg-neutral-100 px-6 py-2.5 text-sm font-semibold text-black shadow-sm hover:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-100 transition-all duration-300 transform hover:scale-105">
+              {content.ctaButton.text}
+            </a>
+          </nav>
           <div className="md:hidden">
-            <button 
-              className="z-[60] text-white focus:outline-none"
+            <button
+              ref={menuButtonRef}
+              className="z-[60] text-white p-2"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-              aria-controls="mobile-menu"
               aria-expanded={isMenuOpen}
-              ref={menuButtonRef}
             >
-              {isMenuOpen ? (
-                  <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-              ) : (
-                  <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" />
-                  </svg>
-              )}
+              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={isMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16m-7 6h7"} />
+              </svg>
             </button>
           </div>
         </div>
       </header>
-      
-      <div 
-        id="mobile-menu"
-        className={`md:hidden fixed inset-0 z-40 ${isMenuOpen ? 'visible' : 'invisible'}`}
+
+      {/* --- Mobile Menu --- */}
+      <div
+        className={`md:hidden fixed inset-0 z-40 transition-opacity duration-300 ${isMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible'}`}
         onClick={closeMenu}
         aria-hidden={!isMenuOpen}
       >
-        {/* Backdrop */}
-        <div className={`absolute inset-0 bg-black/70 backdrop-blur-sm transition-opacity duration-300 ${isMenuOpen ? 'opacity-100' : 'opacity-0'}`}></div>
-        {/* Sliding panel */}
-        <nav 
-            className={`absolute top-0 right-0 h-full w-[80%] max-w-sm bg-black/95 border-l border-zinc-800 p-10 flex flex-col items-start space-y-8 transform transition-transform duration-300 ease-[cubic-bezier(.22,.61,.36,1)] ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}
-            onClick={(e) => e.stopPropagation()} // Prevent closing when clicking on nav links
-            ref={panelRef}
+        <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
+        <nav
+          ref={panelRef}
+          className={`absolute top-0 right-0 h-full w-[80%] max-w-sm bg-zinc-900/95 border-l border-zinc-800 p-8 flex flex-col items-start space-y-6 transition-transform duration-300 ease-in-out ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}
+          onClick={(e) => e.stopPropagation()}
         >
-            <a href="#services" onClick={closeMenu} className="text-3xl text-neutral-300 hover:text-white transition-colors duration-300">Services</a>
-            <a href="#about" onClick={closeMenu} className="text-3xl text-neutral-300 hover:text-white transition-colors duration-300">About</a>
-            <a href="#faq" onClick={closeMenu} className="text-3xl text-neutral-300 hover:text-white transition-colors duration-300">FAQ</a>
-            <a href="#contact" onClick={closeMenu} className="text-3xl text-neutral-300 hover:text-white transition-colors duration-300">Contact</a>
-            <a href="#contact" onClick={closeMenu} className="mt-4 inline-block bg-neutral-300 text-black font-bold py-3 px-8 rounded-full text-lg hover:bg-white transition-all duration-300 transform hover:scale-105">
-              Get Started
+          {content.navLinks.map(link => (
+            <a key={link.href} href={link.href} onClick={closeMenu} className="text-3xl text-neutral-200 hover:text-white">
+              {link.text}
             </a>
+          ))}
+          <a href={content.ctaButton.href} onClick={closeMenu} className="mt-4 inline-block rounded-full bg-neutral-100 px-8 py-4 text-lg font-semibold text-black shadow-sm hover:bg-white">
+            {content.ctaButton.text}
+          </a>
         </nav>
       </div>
     </>
