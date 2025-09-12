@@ -1,15 +1,15 @@
 import React from 'react';
-import SmartImage from './SmartImage';
 import Section from './Section';
 
 type Proof = {
   label: string;
   value?: string;
   href?: string;
+  icon?: string;
 };
 
 const proofs: Proof[] = [
-  { label: 'NNA Certified', href: '#' },
+  { label: 'NNA Certified', href: '#', icon: '/assets/nna-seal.png' },
   { label: 'Background Checked', href: '#' },
   { label: 'Bonded & Insured', value: 'E&O $100k', href: '#' },
   { label: 'Years in Business', value: '7+' },
@@ -18,35 +18,24 @@ const proofs: Proof[] = [
 
 const ProofBar: React.FC = () => {
   return (
-    <Section id="proof" className="bg-black">
-      <div className="rounded-2xl border border-zinc-800 bg-zinc-950/40 p-4 md:p-6">
-        <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 md:gap-4 items-center">
-          {proofs.map((p) => (
-            <li key={p.label} className="">
-              {p.href ? (
+    <Section id="proof" className="bg-black -mt-12 sm:-mt-16 md:-mt-20">
+      <div className="container mx-auto px-6">
+        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 backdrop-blur-md p-4">
+          <ul className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 text-center">
+            {proofs.map((p) => (
+              <li key={p.label}>
                 <a
-                  href={p.href}
-                  className="group block rounded-xl border border-zinc-800/80 bg-black/40 px-4 py-3 text-sm md:text-base text-neutral-200 hover:bg-zinc-900/60 transition-colors duration-300"
+                  href={p.href || undefined}
+                  className={`group block rounded-lg px-2 py-4 transition-colors duration-300 ${p.href ? 'hover:bg-zinc-800/60' : 'cursor-default'}`}
+                  onClick={(e) => !p.href && e.preventDefault()}
                 >
-                  {p.label.includes('NNA') && (
-                    <SmartImage src="/assets/nna-seal.png" alt="NNA Certified Notary Signing Agent" width={48} height={48} className="inline-block h-10 w-10 md:h-12 md:w-12 mr-2 align-middle" />
-                  )}
-                  <span className="font-semibold text-white mr-2 align-middle">{p.label}</span>
-                  {p.value && <span className="text-neutral-400">{p.value}</span>}
-                  <span className="sr-only"> (opens verification)</span>
+                  <div className="font-semibold text-white text-sm sm:text-base">{p.label}</div>
+                  {p.value && <div className="text-xs sm:text-sm text-neutral-400 mt-1">{p.value}</div>}
                 </a>
-              ) : (
-                <div className="rounded-xl border border-zinc-800/80 bg-black/40 px-4 py-3 text-sm md:text-base text-neutral-200">
-                  {p.label.includes('NNA') && (
-                    <SmartImage src="/assets/nna-seal.png" alt="NNA Certified Notary Signing Agent" width={48} height={48} className="inline-block h-10 w-10 md:h-12 md:w-12 mr-2 align-middle" />
-                  )}
-                  <span className="font-semibold text-white mr-2 align-middle">{p.label}</span>
-                  {p.value && <span className="text-neutral-400">{p.value}</span>}
-                </div>
-              )}
-            </li>
-          ))}
-        </ul>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </Section>
   );

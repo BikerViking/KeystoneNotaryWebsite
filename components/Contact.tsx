@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import AnimatedOnView from './AnimatedOnView';
 import Section from './Section';
 
+// --- Form State & Validation ---
 type FormState = {
   name: string;
   email: string;
@@ -26,36 +27,51 @@ const initialState: FormState = {
 
 const emailRe = /.+@.+\..+/i;
 
+// --- Content (from metadata.json) ---
+const content = {
+  headline: "Ready to Get Started?",
+  subheading: "Reach out to us for any inquiries or to schedule an appointment. Our team is ready to assist you with all your notary needs.",
+  contactDetails: {
+    email: "info@keystonenotarygroup.com",
+    phone: "(267) 309-9000",
+    hours: "Mon-Fri, 9am - 5pm"
+  },
+  ctaButton: {
+    text: "Send Us an Email",
+    mailto: "info@keystonenotarygroup.com"
+  }
+};
+
+const services = [
+  'Loan Signings',
+  'General Notary Work',
+  'Apostille Services',
+  'I-9 Employment Verification',
+  'Vehicle Title Transfers',
+];
+
+// --- Main Component ---
 const Contact: React.FC = () => {
   const [form, setForm] = useState<FormState>(initialState);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
   const [status, setStatus] = useState<'idle'|'success'|'error'>('idle');
 
-  const services = useMemo(() => [
-    'Loan Signings',
-    'General Notary Work',
-    'Apostille Services',
-    'I-9 Employment Verification',
-    'Vehicle Title Transfers',
-  ], []);
-
   const setField = <K extends keyof FormState>(key: K, val: FormState[K]) => {
     setForm((f) => ({ ...f, [key]: val }));
-    // Inline error clearing for better UX and testability
     setErrors((prev) => {
       const next = { ...prev };
       if (key === 'name' && typeof val === 'string') {
-        if (val.trim()) delete next.name; else next.name = 'Please enter your full name.';
+        if (val.trim()) delete next.name;
       }
       if (key === 'email' && typeof val === 'string') {
-        if (val.trim() && emailRe.test(val)) delete next.email; else next.email = 'Please enter a valid email address.';
+        if (val.trim() && emailRe.test(val)) delete next.email;
       }
       if (key === 'message' && typeof val === 'string') {
-        if (val.trim()) delete next.message; else next.message = 'Please enter a brief description of your request.';
+        if (val.trim()) delete next.message;
       }
       if (key === 'consent' && typeof val === 'boolean') {
-        if (val) delete next.consent; else next.consent = 'Please consent to be contacted.';
+        if (val) delete next.consent;
       }
       return next;
     });
@@ -67,7 +83,6 @@ const Contact: React.FC = () => {
     if (!form.email.trim() || !emailRe.test(form.email)) e.email = 'Please enter a valid email address.';
     if (!form.message.trim()) e.message = 'Please enter a brief description of your request.';
     if (!form.consent) e.consent = 'Please consent to be contacted.';
-    // honeypot
     if (form.company.trim()) e.company = 'Spam detected.';
     return e;
   };
@@ -82,11 +97,8 @@ const Contact: React.FC = () => {
     setSubmitting(true);
     try {
       const endpoint = (import.meta as any).env?.VITE_CONTACT_ENDPOINT as string | undefined;
-      const payload = {
-        ...form,
-        timestamp: new Date().toISOString(),
-        userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : 'unknown',
-      };
+      const payload = { ...form, timestamp: new Date().toISOString() };
+
       if (endpoint) {
         const resp = await fetch(endpoint, {
           method: 'POST',
@@ -95,7 +107,6 @@ const Contact: React.FC = () => {
         });
         if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
       } else {
-        // Fallback: open mailto draft
         const body = [
           `Name: ${form.name}`,
           `Email: ${form.email}`,
@@ -106,7 +117,7 @@ const Contact: React.FC = () => {
           form.message,
         ].filter(Boolean).join('\n');
         const subject = `Contact Request: ${form.service || 'Inquiry'} - ${form.name}`;
-        const href = `mailto:contact@keystonenotary.llc?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        const href = `mailto:${content.contactDetails.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
         window.location.href = href;
       }
       setStatus('success');
@@ -120,131 +131,102 @@ const Contact: React.FC = () => {
   };
 
   return (
-    <Section id="contact" className="bg-black" debugName="contact">
-      <div className="max-w-4xl mx-auto" data-debug="contact-wrap">
-        {/* Heading + accent hairline */}
-        <AnimatedOnView>
-          <div className="mb-4 flex items-center gap-3">
-            <h2 className="text-4xl md:text-5xl font-bold text-white">
-              Schedule a Notary Appointment
-            </h2>
-            <img src="/assets/nna-seal.png" alt="NNA Certified Notary Signing Agent" className="hidden sm:block h-8 w-8 md:h-10 md:w-10 opacity-90" onError={(e)=>{(e.currentTarget.style.display='none')}} />
-          </div>
-          <div className="mt-3 h-px bg-zinc-800" />
-        </AnimatedOnView>
-        <AnimatedOnView delay="60ms">
-          <p className="text-lg text-neutral-400 max-w-[65ch]">
-            A certified notary will respond promptly. For urgent needs, call us or include your preferred time in the request.
-          </p>
-        </AnimatedOnView>
-
-        {/* Trust row */}
-        <AnimatedOnView delay="100ms">
-          <ul className="mt-5 flex flex-wrap gap-2 text-xs md:text-sm text-neutral-400" data-debug="contact-trust">
-            <li className="inline-flex items-center gap-2 rounded-full border border-zinc-800 bg-zinc-950/40 px-3 py-1">NNA Certified</li>
-            <li className="inline-flex items-center gap-2 rounded-full border border-zinc-800 bg-zinc-950/40 px-3 py-1">E&O $100k</li>
-            <li className="inline-flex items-center gap-2 rounded-full border border-zinc-800 bg-zinc-950/40 px-3 py-1">Background Checked</li>
-            <li className="inline-flex items-center gap-2 rounded-full border border-zinc-800 bg-zinc-950/40 px-3 py-1">Same‑Day Appointments</li>
-          </ul>
-        </AnimatedOnView>
-
-        {/* Primary quick CTA row */}
-        <AnimatedOnView delay="130ms">
-          <div className="mt-6 flex flex-wrap items-center gap-3" data-debug="contact-quick-cta">
-            <a href="tel:+15551234567" className="inline-flex items-center gap-2 rounded-full bg-neutral-300 text-black font-semibold px-4 py-2 hover:bg-white transition-colors">
-              <span className="live-indicator" aria-hidden />
-              Call (555) 123‑4567
-            </a>
-            <a href="mailto:contact@keystonenotary.llc" className="text-neutral-400 hover:text-white transition-colors">
-              or email contact@keystonenotary.llc
-            </a>
-          </div>
-        </AnimatedOnView>
-
-        {/* Form card with gradient edge */}
-        <AnimatedOnView delay="170ms">
-          <div className="relative rounded-2xl p-[1px] bg-gradient-to-r from-neutral-700/0 via-neutral-300/25 to-neutral-700/0">
-            {/* Decorative NNA seal watermark (hidden if missing) */}
-            <img
-              src="/assets/nna-seal.png"
-              alt=""
-              aria-hidden
-              className="pointer-events-none select-none opacity-10 absolute -bottom-4 -right-4 h-20 w-20"
-              onError={(e) => { e.currentTarget.style.display = 'none'; }}
-            />
-            <form onSubmit={onSubmit} noValidate className="relative rounded-2xl bg-zinc-900/80 border border-zinc-800 p-6 md:p-8 space-y-4 shadow-[0_10px_30px_rgba(0,0,0,0.35)]" data-debug="contact-form">
-            {/* Honeypot */}
-            <input type="text" name="company" autoComplete="off" tabIndex={-1} value={form.company} onChange={(e) => setField('company', e.target.value)} className="hidden" aria-hidden="true" />
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label htmlFor="name" className="block text-sm text-neutral-300 mb-1">Full Name</label>
-                  <input
-                    id="name" name="name" value={form.name} onChange={(e) => setField('name', e.target.value)}
-                    className={`w-full rounded-lg bg-black border ${errors.name ? 'border-rose-500' : 'border-zinc-800'} px-3 py-2 text-white placeholder-neutral-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-300`}
-                    placeholder="Jane Doe" aria-invalid={!!errors.name} aria-describedby={errors.name ? 'name-err' : undefined}
-                  />
-                  {errors.name && <p id="name-err" className="mt-1 text-sm text-rose-400">{errors.name}</p>}
-                </div>
-                <div>
-                  <label htmlFor="email" className="block text-sm text-neutral-300 mb-1">Email</label>
-                  <input
-                    id="email" name="email" type="email" value={form.email} onChange={(e) => setField('email', e.target.value)}
-                    className={`w-full rounded-lg bg-black border ${errors.email ? 'border-rose-500' : 'border-zinc-800'} px-3 py-2 text-white placeholder-neutral-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-300`}
-                    placeholder="jane@example.com" aria-invalid={!!errors.email} aria-describedby={errors.email ? 'email-err' : undefined}
-                  />
-                  {errors.email && <p id="email-err" className="mt-1 text-sm text-rose-400">{errors.email}</p>}
-                </div>
+    <Section id="contact" className="bg-black py-24 sm:py-32" debugName="contact">
+      <div className="container mx-auto px-6">
+        <div className="grid grid-cols-1 gap-x-16 gap-y-12 lg:grid-cols-2">
+          {/* Left Column: Info */}
+          <AnimatedOnView className="lg:max-w-lg">
+            <h2 className="text-4xl md:text-5xl font-bold text-white">{content.headline}</h2>
+            <p className="mt-4 text-lg leading-8 text-neutral-300">{content.subheading}</p>
+            <div className="mt-10 space-y-6 text-base leading-7 text-neutral-300">
+              <div className="flex gap-x-4">
+                <dt className="flex-none">
+                  <span className="sr-only">Telephone</span>
+                  {/* Heroicon: phone */}
+                  <svg className="h-7 w-6 text-neutral-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 6.75z" /></svg>
+                </dt>
+                <dd><a className="hover:text-white" href={`tel:${content.contactDetails.phone}`}>{content.contactDetails.phone}</a></dd>
               </div>
+              <div className="flex gap-x-4">
+                <dt className="flex-none">
+                  <span className="sr-only">Email</span>
+                  {/* Heroicon: envelope */}
+                  <svg className="h-7 w-6 text-neutral-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" /></svg>
+                </dt>
+                <dd><a className="hover:text-white" href={`mailto:${content.contactDetails.email}`}>{content.contactDetails.email}</a></dd>
+              </div>
+              <div className="flex gap-x-4">
+                <dt className="flex-none">
+                  <span className="sr-only">Hours</span>
+                  {/* Heroicon: clock */}
+                  <svg className="h-7 w-6 text-neutral-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                </dt>
+                <dd>{content.contactDetails.hours}</dd>
+              </div>
+            </div>
+          </AnimatedOnView>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label htmlFor="phone" className="block text-sm text-neutral-300 mb-1">Phone (optional)</label>
-                  <input id="phone" name="phone" value={form.phone} onChange={(e) => setField('phone', e.target.value)} className="w-full rounded-lg bg-black border border-zinc-800 px-3 py-2 text-white placeholder-neutral-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-300" placeholder="(555) 123-4567" />
-                </div>
-                <div>
-                  <label htmlFor="service" className="block text-sm text-neutral-300 mb-1">Service</label>
-                  <select id="service" name="service" value={form.service} onChange={(e) => setField('service', e.target.value)} className="w-full rounded-lg bg-black border border-zinc-800 px-3 py-2 text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-300">
-                    <option value="">Select a service (optional)</option>
-                    {services.map((s) => <option key={s} value={s}>{s}</option>)}
-                  </select>
+          {/* Right Column: Form */}
+          <AnimatedOnView delay="200ms" className="p-8 bg-zinc-900/50 border border-zinc-800 rounded-2xl">
+            <form onSubmit={onSubmit} noValidate className="space-y-6">
+              {/* Honeypot */}
+              <input type="text" name="company" autoComplete="off" tabIndex={-1} value={form.company} onChange={(e) => setField('company', e.target.value)} className="hidden" aria-hidden="true" />
+
+              <div>
+                <label htmlFor="name" className="block text-sm font-medium leading-6 text-neutral-300">Full Name</label>
+                <div className="mt-2">
+                  <input type="text" id="name" name="name" value={form.name} onChange={(e) => setField('name', e.target.value)} required
+                    className={`w-full rounded-md bg-black/20 border-0 px-3.5 py-2 text-white shadow-sm ring-1 ring-inset ${errors.name ? 'ring-rose-500' : 'ring-zinc-700'} placeholder:text-neutral-500 focus:ring-2 focus:ring-inset focus:ring-neutral-300 sm:text-sm sm:leading-6`}
+                  />
+                  {errors.name && <p id="name-err" className="mt-2 text-sm text-rose-400">{errors.name}</p>}
                 </div>
               </div>
 
               <div>
-                <label htmlFor="datetime" className="block text-sm text-neutral-300 mb-1">Preferred Date/Time (optional)</label>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-2">
-                  {['Today PM', 'Tomorrow AM', 'This Week'].map((chip) => (
-                    <button
-                      key={chip}
-                      type="button"
-                      onClick={() => setField('datetime', chip)}
-                      className="rounded-full border border-zinc-800 bg-black px-3 py-1 text-sm text-neutral-300 hover:text-white hover:border-neutral-500 transition-colors"
-                    >
-                      {chip}
-                    </button>
-                  ))}
+                <label htmlFor="email" className="block text-sm font-medium leading-6 text-neutral-300">Email</label>
+                <div className="mt-2">
+                  <input type="email" id="email" name="email" value={form.email} onChange={(e) => setField('email', e.target.value)} required
+                    className={`w-full rounded-md bg-black/20 border-0 px-3.5 py-2 text-white shadow-sm ring-1 ring-inset ${errors.email ? 'ring-rose-500' : 'ring-zinc-700'} placeholder:text-neutral-500 focus:ring-2 focus:ring-inset focus:ring-neutral-300 sm:text-sm sm:leading-6`}
+                  />
+                  {errors.email && <p id="email-err" className="mt-2 text-sm text-rose-400">{errors.email}</p>}
                 </div>
-                <input id="datetime" name="datetime" type="text" value={form.datetime} onChange={(e) => setField('datetime', e.target.value)} className="w-full rounded-lg bg-black border border-zinc-800 px-3 py-2 text-white placeholder-neutral-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-300" placeholder="e.g., Tomorrow after 2pm" />
               </div>
 
               <div>
-                <label htmlFor="message" className="block text-sm text-neutral-300 mb-1">How can we help?</label>
-                <textarea id="message" name="message" value={form.message} onChange={(e) => setField('message', e.target.value)} rows={5} className={`w-full rounded-lg bg-black border ${errors.message ? 'border-rose-500' : 'border-zinc-800'} px-3 py-2 text-white placeholder-neutral-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-300`} placeholder="Briefly describe your request" aria-invalid={!!errors.message} aria-describedby={errors.message ? 'message-err' : undefined} />
-                {errors.message && <p id="message-err" className="mt-1 text-sm text-rose-400">{errors.message}</p>}
+                <label htmlFor="phone" className="block text-sm font-medium leading-6 text-neutral-300">Phone <span className="text-neutral-500">(optional)</span></label>
+                <div className="mt-2">
+                  <input type="tel" id="phone" name="phone" value={form.phone} onChange={(e) => setField('phone', e.target.value)}
+                    className="w-full rounded-md bg-black/20 border-0 px-3.5 py-2 text-white shadow-sm ring-1 ring-inset ring-zinc-700 placeholder:text-neutral-500 focus:ring-2 focus:ring-inset focus:ring-neutral-300 sm:text-sm sm:leading-6"
+                  />
+                </div>
               </div>
 
-              <div className="flex items-start gap-3">
-                <input id="consent" name="consent" type="checkbox" checked={form.consent} onChange={(e) => setField('consent', e.target.checked)} className="mt-1 h-4 w-4 rounded border-zinc-700 bg-black" aria-invalid={!!errors.consent} aria-describedby={errors.consent ? 'consent-err' : undefined} />
-                <label htmlFor="consent" className="text-sm text-neutral-300">I consent to be contacted about my inquiry.</label>
+              <div>
+                <label htmlFor="message" className="block text-sm font-medium leading-6 text-neutral-300">How can we help?</label>
+                <div className="mt-2">
+                  <textarea id="message" name="message" value={form.message} onChange={(e) => setField('message', e.target.value)} rows={4} required
+                    className={`w-full rounded-md bg-black/20 border-0 px-3.5 py-2 text-white shadow-sm ring-1 ring-inset ${errors.message ? 'ring-rose-500' : 'ring-zinc-700'} placeholder:text-neutral-500 focus:ring-2 focus:ring-inset focus:ring-neutral-300 sm:text-sm sm:leading-6`}
+                  ></textarea>
+                  {errors.message && <p id="message-err" className="mt-2 text-sm text-rose-400">{errors.message}</p>}
+                </div>
               </div>
-              {errors.consent && <p id="consent-err" className="-mt-2 text-sm text-rose-400">{errors.consent}</p>}
 
-              <div className="pt-2 flex flex-wrap items-center gap-3">
-                <button type="submit" disabled={submitting} className="bg-neutral-300 text-black font-bold py-2 px-6 rounded-full hover:bg-white transition-all duration-300 disabled:opacity-60" aria-busy={submitting}>
+              <div className="flex items-start gap-x-3">
+                <input id="consent" name="consent" type="checkbox" checked={form.consent} onChange={(e) => setField('consent', e.target.checked)} required
+                  className={`h-4 w-4 mt-1 rounded border-zinc-700 bg-black/20 text-neutral-300 focus:ring-neutral-300 ${errors.consent ? 'ring-rose-500' : 'ring-zinc-700'}`}
+                />
+                <label htmlFor="consent" className="text-sm leading-6 text-neutral-400">
+                  I consent to be contacted about my inquiry.
+                </label>
+              </div>
+              {errors.consent && <p id="consent-err" className="-mt-4 text-sm text-rose-400">{errors.consent}</p>}
+
+              <div>
+                <button type="submit" disabled={submitting}
+                  className="w-full rounded-full bg-neutral-100 px-6 py-3 text-base font-semibold text-black shadow-sm hover:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-100 disabled:opacity-60"
+                >
                   {submitting ? 'Sending…' : 'Send Request'}
                 </button>
-                <span className="text-neutral-500 text-sm">We respect your privacy. Your information is confidential.</span>
               </div>
 
               {status === 'success' && (
@@ -254,20 +236,8 @@ const Contact: React.FC = () => {
                 <p role="alert" className="text-sm text-rose-400">Sorry, something went wrong. Please try again later or email us directly.</p>
               )}
             </form>
-          </div>
-        </AnimatedOnView>
-
-        {/* Secondary contact row at bottom */}
-        <AnimatedOnView delay="220ms">
-          <div className="mt-8 flex flex-wrap items-center gap-4 text-neutral-400" data-debug="contact-secondary">
-            <div className="inline-flex items-center gap-2">
-              <span className="live-indicator" aria-hidden />
-              <span>Mon–Fri, 9am–5pm</span>
-            </div>
-            <a href="tel:+15551234567" className="hover:text-white transition-colors">(555) 123‑4567</a>
-            <a href="mailto:contact@keystonenotary.llc" className="hover:text-white transition-colors">contact@keystonenotary.llc</a>
-          </div>
-        </AnimatedOnView>
+          </AnimatedOnView>
+        </div>
       </div>
     </Section>
   );
