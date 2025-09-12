@@ -36,6 +36,7 @@ const CARD_SPACING_CONFIG = {
   STACKED_VERTICAL_OFFSET_PX: 12,
   STACKED_SCALE_DIFFERENCE: 0.05,
   UNSTACKED_VERTICAL_SPREAD_PX: 220,
+  STACK_TOP_OFFSET_PX: 100, // New value to push the stack down
 };
 
 const Testimonials: React.FC = () => {
@@ -96,7 +97,7 @@ const Testimonials: React.FC = () => {
 
         tl.fromTo(el, {
           x: `calc(-50% + ${stacked.x}px)`,
-          y: stackedY,
+          y: stackedY + CARD_SPACING_CONFIG.STACK_TOP_OFFSET_PX,
           scale: stackedScale,
           rotate: stacked.rotate,
         }, {

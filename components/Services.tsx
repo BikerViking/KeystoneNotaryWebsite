@@ -49,7 +49,7 @@ const FINAL_LAYOUT = {
     { xRem:  30, yVh:  -8, rotate:  10 }, // General Notary Work
     { xRem: -18, yVh:  18, rotate:  -8 }, // Apostille Services
     { xRem:  24, yVh:  24, rotate:   6 }, // I-9 Employment Verification
-    { xRem:   3, yVh:  -6, rotate:  14 }, // Vehicle Title Transfers
+    { xRem:   0, yVh:  -5, rotate:  10 }, // Vehicle Title Transfers (adjusted)
   ],
   mobile: [
     { xRem:  -8, yVh:  -6, rotate: -12 },
