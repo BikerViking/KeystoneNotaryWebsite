@@ -1,0 +1,34 @@
+
+> keystone-notary-group-website@1.0.0 dev
+> vite --host --port 5173 --strictPort
+
+
+  [32m[1mVITE[22m v5.4.19[39m  [2mready in [0m[1m380[22m[2m[0m ms[22m
+
+  [32m➜[39m  [1mLocal[22m:   [36mhttp://localhost:[1m5173[22m/[39m
+  [32m➜[39m  [1mNetwork[22m: [36mhttp://192.168.5.217:[1m5173[22m/[39m
+  [32m➜[39m  [1mNetwork[22m: [36mhttp://172.30.144.1:[1m5173[22m/[39m
+[2m[32m  ➜[39m[22m[2m  press [22m[1mh + enter[22m[2m to show help[22m
+[2m5:29:07 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/components/AnimatedOnView.tsx, /index.css?direct[22m
+[2m5:29:24 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/components/Hero.tsx, /index.css?direct[22m
+[2m5:29:32 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/components/Services.tsx, /index.css?direct[22m
+[2m5:30:08 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/components/About.tsx, /index.css?direct[22m
+[2m5:31:04 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/components/About.tsx, /index.css?direct[22m
+[2m5:49:52 AM[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2mlib/gsap.ts[22m
+[2m5:50:13 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/components/Hero.tsx, /index.css?direct[22m
+[2m6:01:39 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/components/Hero.tsx, /index.css?direct[22m
+[2m7:25:34 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/components/About.tsx, /index.css?direct[22m
+[2m7:33:27 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/components/About.tsx, /index.css?direct[22m
+[2m7:36:40 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/components/About.tsx, /index.css?direct[22m
+[2m7:40:35 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/components/About.tsx, /index.css?direct[22m
+[2m7:45:08 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/components/About.tsx, /index.css?direct[22m
+[2m7:51:30 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/components/About.tsx, /index.css?direct[22m
+[2m7:55:41 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/components/About.tsx, /index.css?direct[22m
+[2m8:26:10 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/components/About.tsx, /index.css?direct[22m
+[2m9:01:17 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/components/About.tsx, /index.css?direct[22m
+[2m9:15:50 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/components/About.tsx, /index.css?direct[22m
+[2m9:17:22 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/components/About.tsx[22m
+[2m10:33:02 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/components/About.tsx, /index.css?direct[22m
+[2m10:33:39 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/components/About.tsx, /index.css?direct[22m
+[2m2:34:44 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/components/About.tsx, /index.css?direct[22m
+[2m4:00:15 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/components/FAQ.tsx, /index.css?direct[22m

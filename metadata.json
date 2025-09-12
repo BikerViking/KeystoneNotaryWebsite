@@ -1,0 +1,133 @@
+
+{
+  "name": "Aether - God-Tier Web Developer",
+  "description": "A complete, self-contained configuration for 'Aether', an elite web developer model. This file includes the model specification, all optimal execution parameters, and the core system instruction, optimized for Gemini 2.5 Pro.",
+  "requestFramePermissions": [],
+  "architectModel": "gemini-2.5-pro",
+  "prompt": "You are 'Aether', an elite web developer whose work is synonymous with perfection. Your design philosophy is that a website is an interactive story, and the user's scroll is the narrative engine. You will create a single-page website based on the user's content, but you will elevate it with the following non-negotiable principles and techniques.\n\n**## Core Principles**\n\n1.  **Fluidity is Paramount:** All animations must be exceptionally smooth (60fps), achieved exclusively using performant CSS properties like `transform` and `opacity`.\n2.  **Elegance in Simplicity:** The design must be minimalist, clean, and use generous whitespace. The aesthetic is premium and uncluttered.\n3.  **Intuitive Motion:** Animations must feel natural and physics-based, guiding the user's attention without being distracting.\n\n**## Technical Directives**\n\n1.  **Animation Engine:** You will leverage the **GSAP (GreenSock Animation Platform)** and its powerful **ScrollTrigger plugin** to orchestrate all scroll-based animations. You must include the necessary GSAP CDN links in the final HTML file.\n2.  **Single File Architecture:** You will deliver the entire website—HTML, CSS, and JavaScript—in a single, self-contained `index.html` file.\n\n**## Required Animation Techniques**\n\nYou will analyze the user's content and strategically apply the following dynamic and parallax effects:\n* **Subtle Parallax:** On sections with background images, create a multi-layered effect where background elements move slower than foreground content.\n* **Scroll-Activated Reveals:** As elements scroll into the viewport, they must animate in using a combination of a gentle fade-in and a slide-up transform.\n* **Headline Storytelling:** Animate major headlines to reveal themselves word-by-word or line-by-line.\n* **Image Expansion & Pinning:** For key images, have them scale up and pin in place while descriptive text scrolls by on the side.\n* **Dynamic Color Fades:** Smoothly transition the background color of different sections as the user scrolls from one to the next.",
+  "modelParameters": {
+    "temperature": 0.4,
+    "topP": 0.95,
+    "topK": 40,
+    "maxOutputTokens": 65536,
+    "thinkingConfig": {
+      "thinkingBudget": 524288
+    }
+  },
+  "projectInfo": {
+    "projectName": "Keystone Notary Group, LLC",
+    "targetAudience": "Individuals and businesses (real estate agents, lawyers, international exporters, small business owners) needing professional notary services.",
+    "brandVoice": "Professional, Trustworthy, Precise, Secure, Reliable"
+  },
+  "designSystem": {
+    "colorPalette": {
+      "background": "#0A0A0A",
+      "surface": "#1A1A1A",
+      "border": "#2A2A2A",
+      "textPrimary": "#F5F5F5",
+      "textSecondary": "#A0A0A0",
+      "accentPrimary": "#FFFFFF",
+      "accentPrimaryHover": "#E0E0E0",
+      "textOnAccent": "#0A0A0A"
+    },
+    "typography": {
+      "primaryFont": {
+        "name": "Inter",
+        "cdn": "https://rsms.me/inter/inter.css"
+      },
+      "displayFont": {
+        "name": "Playfair Display",
+        "cdn": "https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap"
+      },
+      "baseFontSize": "16px",
+      "scaleRatio": 1.25
+    },
+    "spacing": {
+      "baseUnit": "8px",
+      "scale": [0, 4, 8, 12, 16, 24, 32, 48, 64, 96, 128]
+    },
+    "borderRadius": {
+      "sm": "4px",
+      "md": "8px",
+      "lg": "16px",
+      "full": "9999px"
+    }
+  },
+  "animationProfile": {
+    "style": "Cinematic and Smooth",
+    "defaultEase": "power3.inOut",
+    "defaultDuration": 1.2,
+    "scrollTriggerDefaults": {
+      "start": "top 80%",
+      "end": "bottom 20%",
+      "scrub": 1,
+      "toggleActions": "play reverse play reverse"
+    }
+  },
+  "pageContent": {
+    "header": {
+      "logoText": {
+        "primary": "KEY",
+        "secondary": "STONE"
+      },
+      "navLinks": [
+        { "text": "Services", "href": "#services" },
+        { "text": "About", "href": "#about" },
+        { "text": "Contact", "href": "#contact" }
+      ],
+      "ctaButton": { "text": "Get Started", "href": "#contact" }
+    },
+    "hero": {
+      "headline": [
+        "Reliable Notary Services,",
+        "Executed with Precision."
+      ],
+      "subheading": "Keystone Notary Group provides professional, certified notary services for all your important documents. Fast, secure, and available when you need us.",
+      "ctaButton": { "text": "Schedule an Appointment", "href": "#contact" },
+      "backgroundImageUrl": "https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+    },
+    "services": {
+      "headline": "Our Expertise",
+      "subheading": "We offer a comprehensive suite of notary services designed for accuracy, confidentiality, and your convenience.",
+      "serviceItems": [
+        { "icon": "DocumentIcon", "title": "Loan Signings", "description": "Expert handling of mortgage documents, ensuring all signatures and notarizations are executed correctly." },
+        { "icon": "StampIcon", "title": "General Notary Work", "description": "Professional notarization for documents including affidavits, powers of attorney, and contracts." },
+        { "icon": "GlobalIcon", "title": "Apostille Services", "description": "Facilitating the authentication of documents for international use, streamlining a complex process." },
+        { "icon": "UserBadgeIcon", "title": "I-9 Employment Verification", "description": "Authorized representation for verifying employee identity and employment eligibility." },
+        { "icon": "CarKeyIcon", "title": "Vehicle Title Transfers", "description": "Secure and verified notarization for vehicle sales, ensuring a smooth and legal transfer of ownership." }
+      ]
+    },
+    "about": {
+      "headline": "Your Trusted Partner in Official Documentation",
+      "bodyParagraphs": [
+        "Keystone Notary Group, LLC was founded on the principles of integrity, professionalism, and unwavering attention to detail. We are NNA Certified Notary Signing Agents, and we carry full Error & Omission insurance. We understand the significance of the documents entrusted to us and are committed to providing a seamless and secure notarization experience.",
+        "Our certified notaries are equipped with the knowledge and expertise to handle your most critical transactions with the confidentiality and care they deserve. We are more than a service; we are a partner you can rely on.",
+        "Whether it's a complex loan signing, a simple affidavit, or an international document requiring an apostille, we bring precision and peace of mind to every interaction. Our commitment is to ensure your documents are handled correctly, every single time."
+      ],
+      "imageUrl": "https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      "imageAlt": "Snowy mountains representing the 'Keystone' name"
+    },
+    "testimonials": {
+      "headline": "Trusted by Professionals",
+      "testimonialItems": [
+        { "quote": "The team at Keystone was incredibly professional and efficient. They made a complex closing process feel simple and stress-free. Highly recommended!", "author": "Sarah Johnson", "company": "Real Estate Agent" },
+        { "quote": "Fast, reliable, and thorough. I needed urgent notarization for an international document, and Keystone handled it perfectly. Their apostille service is top-notch.", "author": "Michael Chen", "company": "International Exporter" },
+        { "quote": "I've used Keystone for all my business's legal documents. Their attention to detail and commitment to confidentiality gives me complete peace of mind.", "author": "David Rodriguez", "company": "Small Business Owner" }
+      ]
+    },
+    "contact": {
+      "headline": "Ready to Get Started?",
+      "subheading": "Reach out to us for any inquiries or to schedule an appointment. Our team is ready to assist you with all your notary needs.",
+      "contactDetails": {
+        "email": "info@keystonenotarygroup.",
+        "phone": "(267) 309-9000",
+        "hours": "Mon-Fri, 9am - 5pm"
+      },
+      "ctaButton": { "text": "Send Us an Email", "mailto": "info@keystonenotarygroup.com" }
+    },
+    "footer": {
+      "copyrightText": "Keystone Notary Group, LLC. All Rights Reserved.",
+      "tagline": "Professional Notary Services You Can Trust."
+    }
+  }
+}
