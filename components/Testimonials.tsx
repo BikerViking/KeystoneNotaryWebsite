@@ -122,7 +122,7 @@ const Testimonials: React.FC = () => {
       >
         <div
           ref={titleRef}
-          className="absolute top-0 w-full pt-20 md:pt-32 text-center"
+          className="absolute top-0 w-full pt-20 md:pt-32 text-center z-10"
         >
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-16 font-serif">
             {content.headline}

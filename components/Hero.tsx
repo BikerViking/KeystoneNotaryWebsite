@@ -1,15 +1,15 @@
 import React, { useLayoutEffect, useMemo, useRef } from 'react';
 import { ensureGSAP, makeMM, isReducedMotion } from '../lib/gsap';
 
-// --- Content (from metadata.json) ---
+// --- Content ---
 const content = {
   headline: [
-    "Reliable Notary Services,",
-    "Executed with Precision."
+    "Keystone Notary Group,",
+    "LLC"
   ],
-  subheading: "Mobile Notary Public and NNA Certified Signing Agents serving Bucks, Lehigh, Montgomery, and Northampton counties.",
-  ctaButton: { text: "Schedule an Appointment", href: "#booking" },
-  backgroundImageUrl: "https://placehold.co/1920x1080/1A1A1A/FFFFFF?text=Keystone+Notary+Group"
+  subheading: "Excellence. Precision. On Demand. Mobile Notary Public and NNA Certified Signing Agents serving Bucks, Lehigh, Montgomery, and Northampton counties.",
+  ctaButton: { text: "Book an Appointment", href: "#booking" },
+  backgroundImageUrl: "https://images.unsplash.com/photo-1617575429321-cde443657757?q=80&w=2500&auto=format&fit=crop"
 };
 
 // --- Component ---
@@ -19,6 +19,8 @@ const Hero: React.FC = () => {
   const midRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const headlineRef = useRef<HTMLHeadingElement>(null);
+  const subheadingRef = useRef<HTMLParagraphElement>(null);
+  const ctaRef = useRef<HTMLAnchorElement>(null);
 
   const primaryLine = useMemo(() => content.headline[0].split(' '), []);
   const secondaryLine = useMemo(() => content.headline[1].split(' '), []);
@@ -31,30 +33,32 @@ const Hero: React.FC = () => {
     const { gsap } = ensureGSAP();
     const ctx = gsap.context(() => {
       const mm = makeMM();
-      // Hint the browser for smoother transforms
-      gsap.set([bgRef.current, midRef.current, contentRef.current], { willChange: 'transform' });
+      const allRefs = [bgRef.current, midRef.current, headlineRef.current, subheadingRef.current, ctaRef.current];
+      gsap.set(allRefs, { willChange: 'transform' });
 
-      const build = (bgY: number, bgScale: number, midY: number, contentY: number) => {
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: heroEl,
-            start: 'top top',
-            end: 'bottom top',
-            scrub: true,
-            invalidateOnRefresh: true,
-          },
-          defaults: { ease: 'none', force3D: true }
-        });
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: heroEl,
+          start: 'top top',
+          end: 'bottom top',
+          scrub: true,
+          invalidateOnRefresh: true,
+        },
+        defaults: { ease: 'none', force3D: true }
+      });
 
-        tl.to(bgRef.current, { yPercent: bgY, scale: bgScale, transformOrigin: '50% 20%' })
-          .to(midRef.current, { yPercent: midY }, 0)
-          .to(contentRef.current, { yPercent: contentY }, 0);
-      };
+      // Background layer
+      tl.to(bgRef.current, { yPercent: 35, scale: 1.2, transformOrigin: '50% 20%' });
 
-      mm.add('(max-width: 767px)', () => build(30, 1.15, 20, 14));
-      mm.add('(min-width: 768px)', () => build(45, 1.22, 30, 20));
+      // Mid-layer (glow)
+      tl.to(midRef.current, { yPercent: 25 }, 0);
 
-      // Word reveal animation
+      // Content layers (staggered parallax)
+      tl.to(headlineRef.current, { yPercent: 70 }, 0);
+      tl.to(subheadingRef.current, { yPercent: 50 }, 0);
+      tl.to(ctaRef.current, { yPercent: 40 }, 0);
+
+      // Word reveal animation (initial entrance)
       if (headlineRef.current) {
         const words = headlineRef.current.querySelectorAll('.word');
         gsap.from(words, {
@@ -79,8 +83,7 @@ const Hero: React.FC = () => {
     <section ref={heroRef} id="hero" className="relative h-screen flex items-center justify-center text-center overflow-hidden">
       <div
         ref={bgRef}
-        className="absolute top-0 left-0 w-full h-full bg-cover bg-center bg-no-repeat z-0"
-        style={{ backgroundImage: `url('${content.backgroundImageUrl}')` }}
+        className="absolute top-0 left-0 w-full h-full bg-cover bg-center bg-no-repeat z-0 hero-bg"
       />
       {/* Mid-layer highlight for added depth */}
       <div
@@ -108,18 +111,19 @@ const Hero: React.FC = () => {
               <span key={`p-${i}-${w}`} className="word inline-block">{w}{' '}</span>
             ))}
           </span>
-          <span className="block text-gold">
+          <span className="block text-gold text-4xl md:text-6xl lg:text-7xl">
             {secondaryLine.map((w, i) => (
               <span key={`s-${i}-${w}`} className="word inline-block">{w}{' '}</span>
             ))}
           </span>
         </h1>
-        <p className="text-lg md:text-xl text-neutral-200 max-w-3xl mx-auto mb-8">
+        <p ref={subheadingRef} className="text-lg md:text-xl text-neutral-200 max-w-3xl mx-auto mb-8">
           {content.subheading}
         </p>
         <a
+          ref={ctaRef}
           href={content.ctaButton.href}
-          className="inline-block rounded-full bg-neutral-100 px-8 py-4 text-lg font-semibold text-black shadow-sm hover:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-100 transition-all duration-300 transform hover:scale-105"
+          className="inline-block rounded-full bg-gold px-8 py-4 text-lg font-semibold text-black shadow-sm hover:bg-gold-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold transition-all duration-300 transform hover:scale-105"
         >
           {content.ctaButton.text}
         </a>

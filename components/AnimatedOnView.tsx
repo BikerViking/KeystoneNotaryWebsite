@@ -27,27 +27,20 @@ const AnimatedOnView: React.FC<Props> = ({ children, delay = '0ms', y = 28, once
     // Start from hidden state and animate when in view
     gsap.set(el, { opacity: 0, y, scale: 0.98, rotateX: -10 });
 
-    const st = ScrollTrigger.create({
-      trigger: el,
-      start: 'top 85%',
-      onEnter: self => {
-        gsap.to(el, {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          rotateX: 0,
-          duration: 0.8,
-          ease: 'power3.out',
-          delay: parseFloat(delay) / 1000 || 0
-        });
-        if (once) self.kill();
-      },
-      onLeaveBack: () => {
-        if (!once) gsap.to(el, { opacity: 0, y, scale: 0.98, rotateX: -10, duration: 0.5, ease: 'power2.in' });
-      },
+    gsap.to(el, {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      rotateX: 0,
+      ease: 'power3.out',
+      scrollTrigger: {
+        trigger: el,
+        start: 'top 90%',
+        end: 'top 60%',
+        scrub: true,
+        invalidateOnRefresh: true,
+      }
     });
-
-    return () => st.kill();
   }, [delay, y, once, reduceMotion]);
 
   // Only apply the inline fallback when matchMedia is not supported (e.g., tests/SSR)
