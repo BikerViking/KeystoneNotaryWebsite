@@ -22,9 +22,9 @@ body {
 /* Global type rhythm */
 @layer base {
   p { @apply text-neutral-300 leading-relaxed; }
-  h1 { @apply mb-4; }
-  h2 { @apply mb-6 md:mb-8; }
-  h3 { @apply mb-3; }
+  h1 { @apply mb-4 font-bold; }
+  h2 { @apply mb-6 md:mb-8 font-semibold; }
+  h3 { @apply mb-3 font-semibold; }
 }
 
 /* Accessible skip link */
@@ -79,4 +79,10 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .live-indicator { animation: none; }
   .shimmer::after { display: none; }
+}
+
+@layer utilities {
+  .hero-bg {
+    background: linear-gradient(to bottom, #222, #000);
+  }
 }

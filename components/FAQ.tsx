@@ -71,7 +71,7 @@ const AccordionItem: React.FC<{
         aria-expanded={isOpen}
         className="flex w-full items-center justify-between py-6 text-left"
       >
-        <span className="text-lg font-medium text-gold">{item.q}</span>
+        <span className="text-lg font-medium text-neutral-100">{item.q}</span>
         <svg
           ref={iconRef}
           className="h-6 w-6 flex-shrink-0 text-neutral-400"

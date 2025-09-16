@@ -65,11 +65,11 @@ const ExpandedServices: React.FC = () => {
           {detailedServices.map((service, index) => (
             <AnimatedOnView key={service.title} delay={`${index * 100}ms`}>
               <div className="flex flex-col items-start text-left p-8 bg-zinc-900 rounded-2xl border border-zinc-800 h-full transition-all duration-300 hover:bg-zinc-800/50 hover:border-zinc-700">
-                <div className="mb-6 text-gold">
+                <div className="mb-6 text-neutral-300">
                   {service.icon}
                 </div>
-                <h3 className="text-2xl font-bold text-gold mb-3">{service.title}</h3>
-                <p className="text-neutral-300 leading-relaxed">
+                <h3 className="text-2xl font-bold text-white mb-3">{service.title}</h3>
+                <p className="text-neutral-400 leading-relaxed">
                   {service.description}
                 </p>
               </div>

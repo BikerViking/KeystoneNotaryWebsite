@@ -1,18 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-// --- Content (from metadata.json) ---
+// --- Content ---
 const content = {
-  logoText: {
-    primary: "KEY",
-    secondary: "STONE"
-  },
+  logoUrl: "https://placehold.co/150x50/1A1A1A/FFFFFF?text=Keystone",
   navLinks: [
     { text: "Services", href: "#services" },
     { text: "About", href: "#about" },
-    { text: "FAQ", href: "#faq" },
-    { text: "Contact", href: "#contact" }
+    { text: "FAQ", href: "#faq" }
   ],
-  ctaButton: { text: "Get Started", href: "#contact" }
+  ctaButton: { text: "Book Now", href: "#booking" }
 };
 
 // --- Main Component ---
@@ -82,16 +78,12 @@ const Header: React.FC = () => {
         }`}
       >
         <div className="container mx-auto px-6 py-4 flex justify-between items-center">
-          <a href="#" className="flex items-center gap-2" aria-label="Keystone Notary Group Home">
+          <a href="#" className="flex items-center" aria-label="Keystone Notary Group Home">
             <img
-              src="/assets/logo-silver-metallic.png"
+              src={content.logoUrl}
               alt="Keystone Notary Group Logo"
-              className="h-8 w-8 object-contain"
+              className="h-8 bg-zinc-800"
             />
-            <div className="text-2xl font-bold text-white tracking-wider select-none">
-              <span className="text-neutral-300">{content.logoText.primary}</span>
-              {content.logoText.secondary}
-            </div>
           </a>
           <nav className="hidden md:flex items-center space-x-8">
             {content.navLinks.map(link => (
@@ -99,7 +91,7 @@ const Header: React.FC = () => {
                 {link.text}
               </a>
             ))}
-            <a href={content.ctaButton.href} className="inline-block rounded-full bg-neutral-100 px-6 py-2.5 text-sm font-semibold text-black shadow-sm hover:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-100 transition-all duration-300 transform hover:scale-105">
+            <a href={content.ctaButton.href} className="inline-block rounded-full bg-gold px-6 py-2.5 text-sm font-semibold text-black shadow-sm hover:bg-gold-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold transition-all duration-300 transform hover:scale-105">
               {content.ctaButton.text}
             </a>
           </nav>

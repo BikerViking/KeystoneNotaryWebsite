@@ -12,7 +12,7 @@ const Section: React.FC<Props> = ({ id, className = '', children, debugName }) =
   return (
     <section
       id={id}
-      className={`relative py-28 md:py-36 scroll-mt-24 md:scroll-mt-28 ${className}`}
+      className={`relative py-32 md:py-48 scroll-mt-24 md:scroll-mt-28 ${className}`}
       data-debug={dbg}
     >
       <div className="container mx-auto">
