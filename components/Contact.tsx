@@ -27,19 +27,16 @@ const initialState: FormState = {
 
 const emailRe = /.+@.+\..+/i;
 
-// --- Content (from metadata.json) ---
+// --- Content ---
 const content = {
   headline: "Ready to Get Started?",
-  subheading: "Reach out to us for any inquiries or to schedule an appointment. Our team is ready to assist you with all your notary needs.",
+  subheading: "We are mobile notaries and NNA certified signing agents based in Hellertown, PA. Reach out to us for any inquiries or to schedule an appointment.",
   contactDetails: {
     email: "info@keystonenotarygroup.com",
     phone: "(267) 309-9000",
-    hours: "Mon-Fri, 9am - 5pm"
+    hours: "Mon-Fri, 9am - 5pm",
+    address: "Hellertown, Pennsylvania"
   },
-  ctaButton: {
-    text: "Send Us an Email",
-    mailto: "info@keystonenotarygroup.com"
-  }
 };
 
 const services = [
@@ -136,7 +133,7 @@ const Contact: React.FC = () => {
         <div className="grid grid-cols-1 gap-x-16 gap-y-12 lg:grid-cols-2">
           {/* Left Column: Info */}
           <AnimatedOnView className="lg:max-w-lg">
-            <h2 className="text-4xl md:text-5xl font-bold text-white">{content.headline}</h2>
+            <h2 className="text-4xl md:text-5xl font-bold text-white font-serif">{content.headline}</h2>
             <p className="mt-4 text-lg leading-8 text-neutral-300">{content.subheading}</p>
             <div className="mt-10 space-y-6 text-base leading-7 text-neutral-300">
               <div className="flex gap-x-4">
@@ -162,6 +159,14 @@ const Contact: React.FC = () => {
                   <svg className="h-7 w-6 text-neutral-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                 </dt>
                 <dd>{content.contactDetails.hours}</dd>
+              </div>
+              <div className="flex gap-x-4">
+                <dt className="flex-none">
+                  <span className="sr-only">Address</span>
+                  {/* Heroicon: map-pin */}
+                  <svg className="h-7 w-6 text-neutral-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" /></svg>
+                </dt>
+                <dd>{content.contactDetails.address}</dd>
               </div>
             </div>
           </AnimatedOnView>

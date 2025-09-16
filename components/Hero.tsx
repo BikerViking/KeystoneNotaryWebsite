@@ -7,9 +7,9 @@ const content = {
     "Reliable Notary Services,",
     "Executed with Precision."
   ],
-  subheading: "Keystone Notary Group provides professional, certified notary services for all your important documents. Fast, secure, and available when you need us.",
-  ctaButton: { text: "Schedule an Appointment", href: "#contact" },
-  backgroundImageUrl: "https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+  subheading: "Mobile Notary Public and NNA Certified Signing Agents serving Bucks, Lehigh, Montgomery, and Northampton counties.",
+  ctaButton: { text: "Schedule an Appointment", href: "#booking" },
+  backgroundImageUrl: "https://placehold.co/1920x1080/1A1A1A/FFFFFF?text=Keystone+Notary+Group"
 };
 
 // --- Component ---
@@ -100,7 +100,7 @@ const Hero: React.FC = () => {
       <div ref={contentRef} className="relative z-20 px-6">
         <h1
           ref={headlineRef}
-          className="text-5xl md:text-7xl lg:text-8xl font-extrabold text-white tracking-tight leading-tight mb-6"
+          className="text-5xl md:text-7xl lg:text-8xl font-bold text-white tracking-tighter leading-tight mb-6 font-serif"
           aria-label={content.headline.join(' ')}
         >
           <span className="block">
@@ -108,13 +108,13 @@ const Hero: React.FC = () => {
               <span key={`p-${i}-${w}`} className="word inline-block">{w}{' '}</span>
             ))}
           </span>
-          <span className="block text-neutral-300">
+          <span className="block text-gold">
             {secondaryLine.map((w, i) => (
               <span key={`s-${i}-${w}`} className="word inline-block">{w}{' '}</span>
             ))}
           </span>
         </h1>
-        <p className="text-lg md:text-xl text-neutral-300 max-w-3xl mx-auto mb-8">
+        <p className="text-lg md:text-xl text-neutral-200 max-w-3xl mx-auto mb-8">
           {content.subheading}
         </p>
         <a

@@ -71,7 +71,7 @@ const AccordionItem: React.FC<{
         aria-expanded={isOpen}
         className="flex w-full items-center justify-between py-6 text-left"
       >
-        <span className="text-lg font-medium text-neutral-100">{item.q}</span>
+        <span className="text-lg font-medium text-gold">{item.q}</span>
         <svg
           ref={iconRef}
           className="h-6 w-6 flex-shrink-0 text-neutral-400"
@@ -142,8 +142,8 @@ const FAQ: React.FC = () => {
     <Section id="faq" className="bg-black" debugName="faq">
       <div ref={sectionRef} className="container mx-auto max-w-3xl px-6">
         <AnimatedOnView>
-          <h2 className="text-4xl md:text-5xl font-bold text-white text-center">Frequently Asked Questions</h2>
-          <p className="text-neutral-400 text-lg max-w-2xl mx-auto mt-4 text-center">
+          <h2 className="text-4xl md:text-5xl font-bold text-white text-center font-serif">Frequently Asked Questions</h2>
+          <p className="text-neutral-300 text-lg max-w-2xl mx-auto mt-4 text-center">
             Straight answers about our services, scheduling, and requirements.
           </p>
         </AnimatedOnView>

@@ -19,8 +19,15 @@ module.exports = {
       },
     },
     extend: {
+      colors: {
+        'gold': {
+          DEFAULT: '#C0A062',
+          'dark': '#A98B4F',
+        }
+      },
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
+        serif: ['"Playfair Display"', 'serif'],
       },
     },
   },

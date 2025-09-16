@@ -124,7 +124,7 @@ const Testimonials: React.FC = () => {
           ref={titleRef}
           className="absolute top-0 w-full pt-20 md:pt-32 text-center"
         >
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-16">
+          <h2 className="text-4xl md:text-5xl font-bold text-white mb-16 font-serif">
             {content.headline}
           </h2>
         </div>
@@ -151,7 +151,7 @@ const Testimonials: React.FC = () => {
                   <p className="text-neutral-300 italic mb-6">"{testimonial.quote}"</p>
                 </div>
                 <div>
-                  <p className="font-bold text-white">{testimonial.author}</p>
+                  <p className="font-bold text-gold">{testimonial.author}</p>
                   <p className="text-sm text-neutral-500">{testimonial.company}</p>
                 </div>
               </div>

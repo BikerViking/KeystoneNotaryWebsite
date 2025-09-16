@@ -2,13 +2,13 @@ import React from 'react';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import Services from './components/Services';
+import ExpandedServices from './components/ExpandedServices';
 import About from './components/About';
 import Testimonials from './components/Testimonials';
 import FAQ from './components/FAQ';
+import Booking from './components/Booking';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
-import ProofBar from './components/ProofBar';
-import RecentJobs from './components/RecentJobs';
 import DebugOverlay from './components/DebugOverlay';
 
 const App: React.FC = () => {
@@ -18,11 +18,11 @@ const App: React.FC = () => {
       <main id="main">
         <Hero />
         <Services />
-        <ProofBar />
-        <RecentJobs />
+        <ExpandedServices />
         <About />
         <Testimonials />
         <FAQ />
+        <Booking />
         <Contact />
       </main>
       <Footer />
