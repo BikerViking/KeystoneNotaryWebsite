@@ -11,8 +11,8 @@ const content = {
     "Our certified notaries are equipped with the knowledge and expertise to handle your most critical transactions with the confidentiality and care they deserve. We are more than a service; we are a partner you can rely on.",
     "Whether it's a complex loan signing, a simple affidavit, or an international document requiring an apostille, we bring precision and peace of mind to every interaction. Our commitment is to ensure your documents are handled correctly, every single time."
   ],
-  imageUrl: "https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  imageAlt: "Snowy mountains representing the 'Keystone' name"
+  imageUrl: "https://placehold.co/800x1000/1A1A1A/C0A062?text=Keystone",
+  imageAlt: "Keystone Notary Group"
 };
 
 const About: React.FC = () => {
@@ -96,7 +96,7 @@ const About: React.FC = () => {
             </div>
 
             <div className="relative">
-              <h2 ref={titleRef} className="text-4xl md:text-5xl font-bold text-white">
+              <h2 ref={titleRef} className="text-4xl md:text-5xl font-bold text-white font-serif">
                 {content.headline}
               </h2>
               <div ref={copyRef} className="text-lg text-neutral-300 space-y-6 max-w-[65ch] mt-6">
